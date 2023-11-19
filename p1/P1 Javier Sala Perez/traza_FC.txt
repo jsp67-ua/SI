@@ -1,0 +1,149 @@
+
+################################################################################
+### Ejemplo de traza que podría producir el código al ejecutar la aplicación ###
+### para un tablero de 2x2 vacío, sin letras ni casillas llenas              ###
+################################################################################
+
+
+### Al arrancar la aplicación 
+
+Dimensiones del tablero: 2x2
+Casillas llenas en coordenadas: []
+Casillas con letras en coordenadas: []
+
+Generadas 4 variables:
+* h1:
+- Posición: (0, 0)
+- Longitud: 2
+- Orientación: horizontal
+- Dominio: ["LO", "OS", "LA", "EL", "LE", "AL"]
+- Restricciones: [(mi_celda: 0, var: v1, su_celda: 0),
+                  (mi_celda: 1, var: v2, su_celda: 0)]
+* h2:
+- Posición: (1, 0)
+- Longitud: 2
+- Orientación: horizontal
+- Dominio: ["LO", "OS", "LA", "EL", "LE", "AL"]
+- Restricciones: [(mi_celda: 0, var: v1, su_celda: 1),
+                  (mi_celda: 1, var: v2, su_celda: 1)]
+* v1:
+- Posición: (0, 0)
+- Longitud: 2
+- Orientación: vertical
+- Dominio: ["LO", "OS", "LA", "EL", "LE", "AL"]
+- Restricciones: [(mi_celda: 0, var: h1, su_celda: 0),
+                  (mi_celda: 1, var: h2, su_celda: 0)]
+* v2:
+- Posición: (0, 1)
+- Longitud: 2
+- Orientación: vertical
+- Dominio: ["LO", "OS", "LA", "EL", "LE", "AL"]
+- Restricciones: [(mi_celda: 0, var: h1, su_celda: 1),
+                  (mi_celda: 1, var: h2, su_celda: 1)]
+
+### Al pulsar el botón FC()
+
+Iniciamos forward_checking
+
+Dominios de las variables no asignadas al inicio:
+h1: ["LO", "OS", "LA", "EL", "LE", "AL"]
+h2: ["LO", "OS", "LA", "EL", "LE", "AL"]
+v1: ["LO", "OS", "LA", "EL", "LE", "AL"]
+v2: ["LO", "OS", "LA", "EL", "LE", "AL"]
+
+
+ITERACIÓN 1:
+
+Variable seleccionada: h1
+
+Asignamos "LO" a la variable seleccionada.
+Recorremos todas las variables sin asignar y eliminamos "LO" del resto de dominios para no permitir palabras repetidas:
+- Ningún dominio queda vacío.
+Recorremos restricciones de h1:
+- Restricción h1.restricciones[0]: eliminamos ["OS", "EL", "AL"] del dominio de var==v1 porque no tienen la letra h1.valor[h1.mi_celda==0] == 'L' en su posición su_celda==0.
+- Restricción h1.restricciones[0]: eliminamos ["LA", "EL", "LE", "AL"] del dominio de v2 porque no tienen la letra h1.valor[mi_celda==1] == 'O' en su posición su_celda=0.
+
+Dominios de las variables no asignadas después de la asignación de la variable seleccionada:
+h2: ["OS", "LA", "EL", "LE", "AL"]
+v1: ["LA", "LE"]
+v2: ["OS"]
+
+Ningún dominio ha quedado vacío, así que pasamos a la siguiente variable.
+
+
+ITERACIÓN 2:
+
+Variable seleccionada: h2
+
+Asignamos "OS" a la variable seleccionada.
+Recorremos todas las variables sin asignar y eliminamos "OS" del resto de dominios.
+- El dominio de v2 ha quedado vacío.
+Recorremos restricciones de h2:
+- Restricción h2.restricciones[0]: eliminamos ["LA", "LE"] del dominio de v1 porque no tienen la letra h2.valor[mi_celda==0] == 'O' en su posición su_celda==1.
+- Restricción h2.restricciones[0]: eliminamos [] del dominio de v2 porque no tienen la letra h1.valor[mi_celda==1] == 'S' en su posición su_celda=0.
+
+Dominios de las variables no asignadas después de la asignación de la variable seleccionada:
+v1: []
+v2: []
+
+Algún dominio ha quedado vacío, así que:
+- Deshacemos la asignación de la variable seleccionada y eliminamos de su dominio esa palabra.
+- Restauramos los dominios afectados.
+Dominios de las variables no asignadas después de restaurar:
+h2: ["LA", "EL", "LE", "AL"]
+v1: ["LA", "LE"]
+v2: ["OS"]
+
+Como el dominio de la variable actual no está vacío, seguimos con esa variable para probar el siguiente valor de su dominio.
+
+### Si el dominio de la variable actual hubiera quedado vacío, en lugar de la frase anterior pondría esto:
+#Como el dominio de la variable actual está vacío:
+#- Volvemos a la variable anterior, h1.
+#- Deshacemos la asignación de esa variable h1 y eliminamos de su dominio la palabra que tenía asignada, "LO".
+#- Restauramos los dominios afectados:
+#Dominios de las variables no asignadas después de restaurar:
+#h1: ["OS", "LA", "EL", "LE", "AL"]
+#h2: ["LO", "OS", "LA", "EL", "LE", "AL"]
+#v1: ["LO", "OS", "LA", "EL", "LE", "AL"]
+#v2: ["LO", "OS", "LA", "EL", "LE", "AL"]
+
+
+ITERACIÓN 3:
+
+Variable seleccionada: h2
+
+Dominios de las variables no asignadas al inicio:
+h2: ["LA", "EL", "LE", "AL"]
+v1: ["LA", "LE"]
+v2: ["OS"]
+
+Asignamos "LA" a la variable seleccionada.
+...
+
+
+funcion FC(i variable): booleano
+    para cada a€ factibles[i] hacer
+        Xi<—a
+        si i=N solución retorna CIERTO
+        sino
+            si forward (i.a)
+                si FC(i+1) retorna CIERTO
+            restaura (i)
+    retorna FALSO
+
+funcion forward(i variable, a valor): booleano
+    para toda j=i+1 hasta N hacer
+        Vacio <— CIERTO
+            para cada b^€ factibles[j] hacer
+                si(a,b)^€   Rij vacio<—FALSO
+                sino eliminar b de factible[j]
+                    Añadir b a podado[j]]
+        si vacio retorna FALSO
+    retorna CIERTO
+
+procedimiento restaura(i variable)
+    para toda j=i+1 hasta N hacer
+        para todo b      podado[j] hacer
+            si Xi responsable filtrado b
+                Eliminar b de podado[j]
+                Añadir b a factible[j]

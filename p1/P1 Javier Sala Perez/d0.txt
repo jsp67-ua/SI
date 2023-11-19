@@ -1,0 +1,1 @@
+¿Podrías hacerme un código en c, donde se ejecuten 3 hilos los cuales llamen a una función y en esa función impriman su número de hilo x veces? El hilo número 0 imprimirá 0 10 veces, el hilo número 1, imprimirá 1 20 veces y el número de hilo 3, imprimirá 3 30 veces. Todo lo anterior usando semáforos.
